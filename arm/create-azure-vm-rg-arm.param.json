@@ -1,0 +1,38 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vm_size": {
+            "value": "Standard_D2_v2"
+        },
+        "script_path": {
+            "value": [
+                "<script path>"
+            ]
+        },
+        "protected_settings": {
+            "value": {
+                "storageAccountName": "<result>",
+                "storageAccountKey": "<result key>"
+            }
+        },
+        "ssh_key_data": {
+            "value": "ssh-rsa ..."
+        },
+        "admin_username": {
+            "value": "jpd"
+        },
+        "result_baseContainerUri": {
+            "value": ""
+        },
+        "result_sas": {
+            "value": ""
+        },
+        "result_postQueueUri": {
+            "value": ""
+        },
+        "result_postQueueSas": {
+            "value": ""
+        }
+    }
+}
