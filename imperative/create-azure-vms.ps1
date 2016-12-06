@@ -1,8 +1,8 @@
 ﻿param (
     [Parameter(Mandatory=$false)]
-    [string]$PubFilePath = "d:\Local Media\skydrive\work\id_rsa.pub",
+    [string]$PubFilePath = "",
     [Parameter(Mandatory=$false)]
-    [string]$SubscriptionName = "Internal-johndand@microsoft.com",
+    [string]$SubscriptionName = "",
     [Parameter(Mandatory=$false)]
     [string]$ResourceGroupName = "benchmark",
     [Parameter(Mandatory=$false)]
