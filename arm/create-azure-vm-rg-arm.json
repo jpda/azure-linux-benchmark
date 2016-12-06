@@ -2,48 +2,46 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "rg_name": {
+            "type": "string"
+        },
         "vm_size": {
             "type": "string"
         },
         "script_path": {
-            "type": "array",
-            "defaultValue": [
-                "https://jpdbenchresult.blob.core.windows.net/scripts/bench.sh"
-            ]
+            "type": "array"
         },
         "protected_settings": {
             "type": "object"
         },
         "ssh_key_data": {
-            "type":"string"
+            "type": "string"
         },
         "admin_username": {
-            "type":"string",
-            "defaultValue": "jpd"
+            "type": "string"
         },
         "result_baseContainerUri": {
-            "type":"string"
+            "type": "string"
         },
         "result_sas": {
-            "type":"string"
+            "type": "string"
         },
-        "result_postQueueUri":{
-            "type":"string"
+        "result_postQueueUri": {
+            "type": "string"
         },
-        "result_postQueueSas":{
-            "type":"string"
+        "result_postQueueSas": {
+            "type": "string"
         }
     },
     "variables": {
-        "rg_name": "[concat(parameters('admin_username'), '-', replace(parameters('vm_size'), '_', '-'))]",
-        "vm_name": "[concat(variables('rg_name'), '-vm')]",
-        "clean_rg": "[replace(variables('rg_name'), '-', '')]",
-        "vm_adminPassword": null,
+        "vm_name": "[concat(parameters('rg_name'), '-vm')]",
+        "clean_rg": "[replace(parameters('rg_name'), '-', '')]",
+        //"vm_adminPassword": null,
         "vnet_name": "bench-net",
         "nic_name": "bench-nic",
         "nsg_name": "bench-nsg",
         "pip_name": "bench-pip",
-        "store_name": "[concat(variables('clean_rg'), take(uniqueString(resourceGroup().id), 3))]"
+        "store_name": "[toLower(concat(variables('clean_rg'), take(uniqueString(resourceGroup().id), 3)))]"
     },
     "resources": [
         {
@@ -86,8 +84,7 @@
                             ]
                         }
                     },
-                    "secrets": [],
-                    "adminPassword": "[variables('vm_adminPassword')]"
+                    "secrets": []
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -216,7 +213,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "bench-script",
+            "name": "[concat(variables('vm_name'), '/bench-script')]",
             "apiVersion": "2016-03-30",
             "location": "eastus2",
             "properties": {
