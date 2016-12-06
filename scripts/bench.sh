@@ -38,13 +38,13 @@ parallel() {
 parallel cleanup
 parallel prepare
 
-echo "`date` STARTING testing..."
+echo "STARTING testing...`date`"
 modes='rndrd seqrd seqwr rndwr rndrw'
 for mode in $modes; do
   for device in $devices; do
     cd $root
     exec >>$OUTDIR/$device/$size-$mode-$threads.log 2>&1
-    echo "`date` TESTING $device-$mode-$threads.txt"
+    echo "TESTING $device-$mode-$threads.txt `date`"
       for ((i=1;i<=$iterations;i++)); do
       echo "`date` start iteration $i"
       sysbench --test=fileio --file-total-size=$size --file-test-mode=$mode \
@@ -58,7 +58,7 @@ done
 
 exec >>$OUTDIR/$device/CPU-$threads 2>&1
 for ((i=1;i<=$iterations;i++)); do
-  echo "`date` start CPU iteration $i"
+  echo "start CPU iteration $i | `date`"
   sysbench --test=cpu --num-threads=$threads --cpu-max-prime=50000 run
 done
 exec >>$OUTDIR/runlog 2>&1
