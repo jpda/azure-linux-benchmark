@@ -1,0 +1,35 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "script_path": {
+            "value": [
+                "<uri to startup script>"
+            ]
+        },
+        "protected_settings": {
+            "value": {
+                "storageAccountName": "<storage account with script>",
+                "storageAccountKey": "<storage account key>"
+            }
+        },
+        "ssh_key_data": {
+            "value": "ssh-rsa LOL"
+        },
+        "admin_username": {
+            "value": "jpd"
+        },
+        "result_baseContainerUri": {
+            "value": "https://<your storage acct>.blob.core.windows.net/<container>"
+        },
+        "result_sas": {
+            "value": "<sas token for result container>"
+        },
+        "result_postQueueUri": {
+            "value": "https://<your storage acct>.queue.core.windows.net:443/<queue name>"
+        },
+        "result_postQueueSas": {
+            "value": "<sas token for queue>"
+        }
+    }
+}

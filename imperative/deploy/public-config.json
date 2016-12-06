@@ -1,0 +1,4 @@
+{
+  "fileUris": ["<uri to startup script>"],
+  "commandToExecute": "sudo ./bench.sh /mnt <blob uri> <blob sas> <queue uri> <queue sas>"
+}
