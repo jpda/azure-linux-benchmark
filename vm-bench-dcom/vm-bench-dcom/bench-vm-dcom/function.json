@@ -1,0 +1,12 @@
+﻿{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "message",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "vmsignal",
+      "connection": "jpdbenchresult_STORAGE"
+    }
+  ]
+}
