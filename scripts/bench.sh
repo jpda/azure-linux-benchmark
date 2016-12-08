@@ -51,8 +51,8 @@ modes='rndrd seqrd seqwr rndwr rndrw'
 for mode in $modes; do
   for device in $devices; do
     cd $root
-    exec >>$OUTDIR/$device/$size-$mode-$threads.log 2>&1
-    echo "TESTING $device-$mode-$threads.txt `date`"
+    exec >>$OUTDIR/$device/DISK-$size-$mode-$threads.log 2>&1
+    echo "TESTING DISK-$device-$mode-$threads.txt `date`"
       for ((i=1;i<=$iterations;i++)); do
       echo "START DISK iteration $i | `date`"
       sysbench --test=fileio --file-total-size=$size --file-test-mode=$mode \
