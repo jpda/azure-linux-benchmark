@@ -26,6 +26,12 @@ devices='ssd'
 apt-get update
 apt-get install sysbench -y 2>&1
 
+# set name for AWS termination queue to Instance id
+if [ ${name:0:3} = 'ip-' ]
+then
+  name=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+fi
+
 parallel() {
   for device in $devices; do
     cd $root || exit
