@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # see https://github.com/tsuna/sysbench-tools/blob/master/runtests.sh
 
 basePath="$1"
@@ -23,6 +23,7 @@ size=2G
 blksize=16K
 devices='ssd'
 
+apt-get update
 apt-get install sysbench -y 2>&1
 
 parallel() {
@@ -38,7 +39,7 @@ parallel() {
 parallel cleanup
 parallel prepare
 
-echo "STARTING testing...`date`"
+echo "START DISK testing...`date`"
 modes='rndrd seqrd seqwr rndwr rndrw'
 for mode in $modes; do
   for device in $devices; do
@@ -46,20 +47,22 @@ for mode in $modes; do
     exec >>$OUTDIR/$device/$size-$mode-$threads.log 2>&1
     echo "TESTING $device-$mode-$threads.txt `date`"
       for ((i=1;i<=$iterations;i++)); do
-      echo "`date` start iteration $i"
+      echo "START DISK iteration $i | `date`"
       sysbench --test=fileio --file-total-size=$size --file-test-mode=$mode \
           --max-time=180 --max-requests=100000000 --num-threads=$threads \
           --init-rng=on --file-extra-flags=direct \
-          --file-fsync-freq=0 --file-block-size=$blksize run 
+          --file-fsync-freq=0 --file-block-size=$blksize run
+      echo "DONE DISK iteration $i | `date`"
       done
-    echo "`date` DONE TESTING $mode-$threads"
+    echo "DONE TESTING $mode-$threads `date`"
   done
 done
 
 exec >>$OUTDIR/$device/CPU-$threads 2>&1
 for ((i=1;i<=$iterations;i++)); do
-  echo "start CPU iteration $i | `date`"
+  echo "START CPU iteration $i | `date`"
   sysbench --test=cpu --num-threads=$threads --cpu-max-prime=50000 run
+  echo "DONE CPU iteration $i | `date`"
 done
 exec >>$OUTDIR/runlog 2>&1
 # cleanup testing files
