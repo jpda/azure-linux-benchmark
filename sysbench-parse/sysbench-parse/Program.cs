@@ -106,7 +106,7 @@ namespace sysbench_parse
         public decimal AverageTime { get; set; }
         public decimal MaximumTime { get; set; }
         public decimal ApproximateTime { get; set; }
-        public decimal RequestRate => TotalEvents / TotalTime;
+        public decimal RequestRate => TotalEvents / (TotalTime / 1000);
 
         protected TestIteration(List<string> lines)
         {
@@ -146,7 +146,7 @@ namespace sysbench_parse
         public decimal DataReadInMb { get; set; }
         public decimal DataWrittenInMb { get; set; }
         public decimal TotalTransferred => DataReadInMb + DataWrittenInMb;
-        public decimal TransferRateInMbS => TotalTransferred / TotalTime;
+        public decimal TransferRateInMbS => TotalTransferred / (TotalTime / 1000);
 
         public DiskTestIteration(List<string> lines) : base(lines)
         {
@@ -159,20 +159,29 @@ namespace sysbench_parse
             var trans = lines.Single(x => x.StartsWith("Read "));
             var transPieces = trans.Split(' ').Where(x => x.Trim() != string.Empty).ToList();
 
-            var read = transPieces[1];
-            var readUnit = new string(read.Skip(read.Length - 2).ToArray());
-            DataReadInMb = decimal.Parse(read.Replace(readUnit, ""));
-            if (readUnit == "Gb")
+            DataReadInMb = 0;
+            DataWrittenInMb = 0;
+
+            var read = transPieces[1].Replace("b", "");
+            if (read != "0")
             {
-                DataReadInMb = DataReadInMb * 1024;
+                var readUnit = new string(read.Skip(read.Length - 1).ToArray());
+                DataReadInMb = decimal.Parse(read.Replace(readUnit, ""));
+                if (readUnit == "G")
+                {
+                    DataReadInMb = DataReadInMb * 1024;
+                }
             }
 
-            var written = transPieces[1];
-            var writtenUnit = new string(written.Skip(written.Length - 2).ToArray());
-            DataWrittenInMb = decimal.Parse(written.Replace(writtenUnit, ""));
-            if (writtenUnit == "Gb")
+            var written = transPieces[1].Replace("b", "");
+            if (written != "0")
             {
-                DataWrittenInMb = DataWrittenInMb * 1024;
+                var writtenUnit = new string(written.Skip(written.Length - 1).ToArray());
+                DataWrittenInMb = decimal.Parse(written.Replace(writtenUnit, ""));
+                if (writtenUnit == "G")
+                {
+                    DataWrittenInMb = DataWrittenInMb * 1024;
+                }
             }
         }
     }

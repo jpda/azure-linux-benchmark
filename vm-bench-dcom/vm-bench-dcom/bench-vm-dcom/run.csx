@@ -61,7 +61,7 @@ public static void TerminateAwsInstance(string instanceId, TraceWriter log)
     {
         if ("InvalidInstanceID.NotFound" == ex.ErrorCode)
         {
-            log.Info("Instance {0} does not exist.", instanceId);
+            log.Info($"Instance {instanceId} does not exist.");
         }
         else
         {
