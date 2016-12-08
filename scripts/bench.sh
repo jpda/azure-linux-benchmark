@@ -86,7 +86,7 @@ for f in $(find $OUTDIR -name "*" -type f)
 done
 # queue up deletion
 queueUrl="$postQueueUri/messages?$postQueueSas"
-message=$(hostname | base64)
+message=$(echo $name | base64)
 queueMessage="<QueueMessage><MessageText>$message</MessageText></QueueMessage>"
 curl -v -H "Content-Type: application/xml" -d $queueMessage -X POST $queueUrl
 
