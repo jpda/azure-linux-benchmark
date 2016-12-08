@@ -65,13 +65,13 @@ for mode in $modes; do
   done
 done
 
-exec >>$OUTDIR/$device/CPU-$threads 2>&1
+exec >>$OUTDIR/$device/CPU-$threads.log 2>&1
 for ((i=1;i<=$iterations;i++)); do
   echo "START CPU iteration $i | `date`"
   sysbench --test=cpu --num-threads=$threads --cpu-max-prime=50000 run
   echo "DONE CPU iteration $i | `date`"
 done
-exec >>$OUTDIR/runlog 2>&1
+exec >>$OUTDIR/run.log 2>&1
 # cleanup testing files
 cd $root
 sysbench --test=fileio --file-total-size=$size cleanup
