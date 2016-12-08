@@ -30,7 +30,7 @@ apt-get install sysbench -y 2>&1
 if [ ${name:0:3} = 'ip-' ]
 then
   name=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-  echo 'AWS - changing name to $name'
+  echo "AWS - changing name to $name"
 fi
 
 parallel() {
