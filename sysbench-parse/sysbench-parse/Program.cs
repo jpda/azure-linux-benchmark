@@ -25,54 +25,62 @@ namespace sysbench_parse
             foreach (var f in new DirectoryInfo(folderPath).EnumerateFiles("*.log"))
             {
                 Console.WriteLine($"found {f}, reading...");
-                if (f.Name.IndexOf("CPU", StringComparison.Ordinal) <= -1) continue;
-
-                var testData = File.ReadAllText(f.FullName);
-                var tests = testData.Split(new[] { "start CPU iteration " }, StringSplitOptions.RemoveEmptyEntries);
-                var cpuTests = new List<CpuTestResult>();
-                foreach (var t in tests)
+                if (f.Name.IndexOf("CPU", StringComparison.Ordinal) > -1)
                 {
-                    
-                    if (!t.Contains("sysbench")) continue;
-
-                    var lines = t.Split('\n').ToList();
-                    var iteration = lines.First();
-                    var threads = lines.Single(x => x.StartsWith("Number of threads:")).Split(':')[1].Trim();
-                    var maxPrime = lines.Single(x => x.StartsWith("Maximum prime number")).Split(':')[1].Trim();
-
-                    var totalTime = lines.Single(x => x.Trim().StartsWith("total time:")).Split(':')[1].Trim();
-                    var totalEvents = lines.Single(x => x.Trim().StartsWith("total number of events")).Split(':')[1].Trim();
-                    var totalTimeByEvent = lines.Single(x => x.Trim().StartsWith("total time taken by event execution")).Split(':')[1].Trim();
-
-                    var min = lines.Single(x => x.Trim().StartsWith("min:")).Split(':')[1].Trim();
-                    var max = lines.Single(x => x.Trim().StartsWith("max:")).Split(':')[1].Trim();
-                    var avg = lines.Single(x => x.Trim().StartsWith("avg:")).Split(':')[1].Trim();
-                    var approx = lines.Single(x => x.Trim().StartsWith("approx.")).Split(':')[1].Trim();
-
-                    Console.WriteLine($"--- start test iteration {iteration}, max prime {maxPrime} on {threads} threads ---");
-                    Console.WriteLine($"Took {totalTime} to do {totalEvents}. Total processing time {totalTimeByEvent}.");
-                    Console.WriteLine($"Min: {min}, Max: {max}, Avg: {avg}, 95%: {approx}");
-                    Console.WriteLine($"--- end test iteration {iteration} ---");
-
-                    var c = new CpuTestResult()
-                    {
-                        Threads = int.Parse(threads),
-                        MaxPrime = int.Parse(maxPrime),
-                        TotalTime = decimal.Parse(totalTime.Replace("s", "")) * 1000,
-                        TotalEvents = int.Parse(totalEvents),
-                        TotalEventTime = decimal.Parse(totalTimeByEvent) * 1000,
-                        MinimumTime = decimal.Parse(min.Replace("ms", "")),
-                        MaximumTime = decimal.Parse(max.Replace("ms", "")),
-                        AverageTime = decimal.Parse(avg.Replace("ms", "")),
-                        ApproximateTime = decimal.Parse(approx.Replace("ms", ""))
-                    };
-                    cpuTests.Add(c);
+                    var cpuResult = ParseCpuResult(f.FullName);
                 }
-
-
-
             }
         }
+
+        private static List<CpuTestResult> ParseCpuResult(string path)
+        {
+            var testData = File.ReadAllText(path);
+            var tests = testData.Split(new[] { "start CPU iteration " }, StringSplitOptions.RemoveEmptyEntries);
+            var cpuTests = new List<CpuTestResult>();
+            foreach (var t in tests)
+            {
+                if (!t.Contains("sysbench")) continue;
+
+                var lines = t.Split('\n').ToList();
+                var iteration = lines.First();
+                var threads = lines.Single(x => x.StartsWith("Number of threads:")).Split(':')[1].Trim();
+                var maxPrime = lines.Single(x => x.StartsWith("Maximum prime number")).Split(':')[1].Trim();
+
+                var totalTime = lines.Single(x => x.Trim().StartsWith("total time:")).Split(':')[1].Trim();
+                var totalEvents = lines.Single(x => x.Trim().StartsWith("total number of events")).Split(':')[1].Trim();
+                var totalTimeByEvent = lines.Single(x => x.Trim().StartsWith("total time taken by event execution")).Split(':')[1].Trim();
+
+                var min = lines.Single(x => x.Trim().StartsWith("min:")).Split(':')[1].Trim();
+                var max = lines.Single(x => x.Trim().StartsWith("max:")).Split(':')[1].Trim();
+                var avg = lines.Single(x => x.Trim().StartsWith("avg:")).Split(':')[1].Trim();
+                var approx = lines.Single(x => x.Trim().StartsWith("approx.")).Split(':')[1].Trim();
+
+                Console.WriteLine($"--- start test iteration {iteration}, max prime {maxPrime} on {threads} threads ---");
+                Console.WriteLine($"Took {totalTime} to do {totalEvents}. Total processing time {totalTimeByEvent}.");
+                Console.WriteLine($"Min: {min}, Max: {max}, Avg: {avg}, 95%: {approx}");
+                Console.WriteLine($"--- end test iteration {iteration} ---");
+
+                var c = new CpuTestResult()
+                {
+                    Threads = int.Parse(threads),
+                    MaxPrime = int.Parse(maxPrime),
+                    TotalTime = decimal.Parse(totalTime.Replace("s", "")) * 1000,
+                    TotalEvents = int.Parse(totalEvents),
+                    TotalEventTime = decimal.Parse(totalTimeByEvent) * 1000,
+                    MinimumTime = decimal.Parse(min.Replace("ms", "")),
+                    MaximumTime = decimal.Parse(max.Replace("ms", "")),
+                    AverageTime = decimal.Parse(avg.Replace("ms", "")),
+                    ApproximateTime = decimal.Parse(approx.Replace("ms", ""))
+                };
+                cpuTests.Add(c);
+            }
+            return cpuTests;
+        }
+    }
+
+    public class TestResult
+    {
+        
     }
 
     public class CpuTestResult
