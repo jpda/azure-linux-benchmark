@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sysbench_parse
 {
@@ -13,7 +11,8 @@ namespace sysbench_parse
         static void Main(string[] args)
         {
             //var r = new Reader();
-            Reader.Load(@"E:\temp\azbench\193820-90437862-7910-4d1d-b45f-1b00a8883650");
+            //Reader.Load(@"E:\temp\azbench\193820-90437862-7910-4d1d-b45f-1b00a8883650");
+            Reader.Run(@"D:\temp\bench");
             Console.WriteLine("all finished");
             Console.ReadLine();
         }
@@ -21,24 +20,48 @@ namespace sysbench_parse
 
     public class Reader
     {
-        public static void Load(string folderPath)
+        public static void Run(string rootPath)
         {
-            var results = new List<Test>();
+            foreach (var d in new DirectoryInfo(rootPath).EnumerateDirectories())
+            {
+                var date = DateTime.ParseExact(d.Name, "yyyyMMdd", CultureInfo.InvariantCulture);
+                Console.WriteLine($"Found {date}");
+                foreach (var system in d.EnumerateDirectories())
+                {
+                    Console.WriteLine($"Found system {system.Name}");
+                    foreach (var run in system.EnumerateDirectories())
+                    {
+                        var r = new Run()
+                        {
+                            RunDate = date,
+                            RunId = run.Name,
+                            SystemName = system.Name
+                        };
+                        Console.WriteLine($"Found run {run.Name}");
+                        Load(run.FullName, r);
+                    }
+                }
+            }
+        }
+
+        public static void Load(string folderPath, Run t)
+        {
+            t.Tests = new List<Test>();
             foreach (var f in new DirectoryInfo(folderPath).EnumerateFiles("*.log"))
             {
                 Console.WriteLine($"found {f}, reading...");
                 if (f.Name.StartsWith("CPU"))
                 {
                     var c = new CPUTest(f.FullName);
-                    results.Add(c);
+                    t.Tests.Add(c);
                 }
                 if (f.Name.StartsWith("DISK-"))
                 {
                     var d = new DiskTest(f.FullName);
-                    results.Add(d);
+                    t.Tests.Add(d);
                 }
             }
-            foreach (var r in results)
+            foreach (var r in t.Tests)
             {
                 Console.WriteLine($" --- Got result {r.GetType()} --- ");
                 foreach (var i in r.Results)
@@ -52,10 +75,17 @@ namespace sysbench_parse
         }
     }
 
+    public class Run
+    {
+        public DateTime RunDate { get; set; }
+        public string SystemName { get; set; }
+        public string RunId { get; set; }
+        public List<Test> Tests { get; set; }
+    }
+
     public class Test
     {
         public List<TestIteration> Results { get; set; }
-
         public Test()
         {
             Results = new List<TestIteration>();
