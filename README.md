@@ -19,10 +19,10 @@ In here, you'll find:
   - log in via Login-AzureRmAccount (interactive) or with an Azure AD Service Principal (headless - preferable)
   - size list is a comma-delimited list of Azure VM sizes (e.g., Standard_D2_v2, Standard_F4, etc.)
   - each VM size listed is created once, although you could easily add in multiples, either in the Powershell loop or via the ARM template
-
+ - An [Azure Function](https://github.com/jpda/azure-linux-benchmark/tree/master/vm-bench-dcom) for 
+   - deleting the Azure Resource Group or AWS VM based on the queue message
+   - deleting the environment (VM, NICs, storage accounts, etc) after benchmarking is complete
+ - AWS Support is here! Create, benchmark and destroy AWS VMs, including dedicated host VM placement.
 ## Coming Soon/WIP
-An [Azure Function](https://github.com/jpda/azure-linux-benchmark/tree/master/vm-bench-dcom) is in the works for deleting the VM's Azure Resource Group based on the queue message, deleting the environment (VM, NICs, storage accounts, etc) after benchmarking is complete.
-
-Support for AWS automation for benchmarking AWS VMs.
 
 [Sysbench data parsing](https://github.com/jpda/azure-linux-benchmark/tree/master/sysbench-parse) to structured formats.
